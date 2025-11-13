@@ -1,0 +1,155 @@
+AWS 
+
+-- services for computing storage networking
+
+
+
+
+S3 :-
+
+Backup and storagefiles
+- stores files(objects) into buckets
+-unique name globally in region level
+- objects (files) have a key (path) - s3://bucket-name/myfile.txt
+- Max obj size should be 5TB
+
+objects can upload under the folder options 
+
+-to make your bucket to public access . go to permission 
+
+--> S3 Bucket policy :- JSOn based policy
+ { 
+	"version": " "
+	"statement" :[
+	   {
+		Sid : "publicread"
+		"effect" : "Allow", - allows users to perform action
+		"Principle":"*", - anyone can access
+		"Action": [
+			"s3:GetObject" - to open the objects(files)
+		],
+		"Resource" : [
+			"arn:aws:s3:::bucket-name/*" - arn 
+		]
+	    }
+         ]
+  }
+it will generate automatically through policy generator it allows anyone can access the objects through link.
+
+--> s3 can host a static website - upload index.html and enable the static website hosting in properties.
+
+--> versioning : when you override a file if you are enabling version it will show old version file.
+
+--> Replication :- (Cross Region Replication) when you want see files from another bucket you enable the replication option in management. if you are upload file in source bucket you can see that file in target bucket. for this you must enable versioning. in source bucket (management -> create replication rule )
+
+
+-->S3 storage classes :- we can move one storage class to another by setting a time period in life cycle rules
+  standard class
+  IA 
+  S3 glaciar 
+ 
+--> AWS Encryption :- aws automatically encrypts the the objects when it is uploaded into s3
+
+--> storage gateway :- provide hybrid cloud service on premises . bridge between on premises and cloud data.
+
+
+----- EC2 - Elastic compute cloud (IaaS):- 
+
+EC2 instances - rental virtual machines 
+EBS - storing data in virtual drives
+ELB - distribute load
+ASG - auto scaling group
+
+based on EC2 user data, ec2 machines created/launched 
+
+--> there different types of Instances - 
+	general purpose - balance between compute,memory,networking 
+	compute optimized  - great for compute intensive tasks(batch etc)
+	memory optimized - fast performance for large datasets
+	storege optimized 
+example :- t2.micro - t is instance class , 2 generation , micro size within instance class
+
+		c5.2xlarge
+
+-->security groups : acts as firewall to ec2 instances
+	access ec2 instances through  inbound and outbound ports security groups
+Inbound - accessing ec2 instanses from webservers
+
+	for ssh maintaing seperate  grps is good when traffic is blocked instance then we get time out error , it is security grp issue
+	classic ports :
+	22 - SSH
+	21 - FTP
+	22 - SFTP
+	80 - HTTP-access unsecured websites
+	443 - HTTPS - secured websites
+if your instance getting timeout this is cause of inbound rules add http in the inbound rules.
+	
+EBS block store :- It is network drive attached to ec2 while running.
+-->ebs volumes are mount to specific AZ.
+--EBS can be delete after ec2 instance termination and we can set it up to not delete.
+--> EBS snapshot :- to backup when ec2 terminates and this snapshots can move across the AZ. we can resore it from recycle bin and when it moves to archive it took 24hrs to recover. 
+
+AMI:- amazon machine image -- customizaion of ec2 instance - add softwares os storages etc..
+ec2 instances can launch from AMIs - region specific move across AZs
+-Public AMI
+-own AMI
+-others AMI we can use
+
+EC2 Image Builder :- it automates the create validate and test of ec2 instances and AMI images.
+
+EC2 Instance storage :- for high performance use hard disc like instance store atteched to ec2 instance.
+not use for longterm storage. it stops when ec2 instance fails.
+
+EFS :- Elastic file system - network file system -can mounted to many ec2 instances . works only with linux 2 - can be used for multiple Az instances at a time
+
+
+Scalability :- abilty to balance the larger loads by increasing the volume(vertical) or increasing the no of instances (horizontal)
+
+Elasticity :- the system is automatically scales based on the load, automatic scalabilty.
+
+High Availabilty  :- Running same application in two different AZ . if any disaster or power issues in one AZ survive the data in another AZ.
+
+Elastic Load Balancer (ELB) :- it forwards/routs the traffic to multiple ec2 instances 
+	Application Load Balancer :- HTTP/HTTPS - 7 layer - traffic from web users through urls
+	Network load balancer :- TCP/UDP - 4 layer - High performance million req per sec - IP
+	gateway loadbalancer - layer 3 - 3rd party security (route traffic to firewalls) 
+
+Auto Scaling :- adding and removing instances based on the load with same size instances. ASG attached to load balancers.
+
+
+
+Databases & Analytics :- 
+
+Databeses are used to store the structured data and used to query them.
+RDS relational Databases :- data should be in excel sheets.tables were connected through relations(joins). Aurora is Amazons RDS
+
+Nosql :- Non-relational databases . data will be in JSON formats . flexible for schemas . key-value pairs . examples :- MongoDB , DynamoDB 
+
+--> RDS we can take snapshot of database and restore that database through snapshots across AZ but only have read access . if we want to write into databases it possible only in main dtabase
+
+-->Redshift :- Its a OLAP datawarehouse , based on PostgreSQL , load data once every hour not every second. its a serverless service
+
+-->EMR (Elastic Map Reduce) :- it helps to create hadoop clusters for analyse and process the vast data . cluster can be made of hundreds of EC2 instances EMR manage these EC2 instances.
+
+-->Athena :- Serverless query service from s3. supprorts csv json
+
+-->Quicksight :- Bi tool ,create dashboard and reporting purpose.
+
+-->DocumentDB :- same as MongoDB(No sql database) store , query the JSON data.
+
+-->Neptune :- Graph Database
+
+-->AWS Glue :- ETL service , glue data catalog
+
+ 
+ECS :- Elastic Container Service 
+
+--> Docker :- It is a platform the deploy application(apps) . our apps are packed in containers and these containers can run on any os or instances . docker images stored in docker repositories .
+
+--> ECS launches the docker container .need to manage the EC2 instances for that we have to create EC2
+    Fargate serverless compute runs docker containers . no need to manage ec2 its serverless
+--> ECR Elastic container registry :- our docker images are stored here it is private docker registry on AWS . runs on fargate
+
+EKS :- Elastic Kubernetes service , kubernetes is a open source system for docker container . kubernetes can run across azure , gcp
+
+Lambda :- 
